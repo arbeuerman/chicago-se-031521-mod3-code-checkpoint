@@ -64,10 +64,10 @@ function displayImage(image)
     // likesDiv.appendChild(downVoteButton);
 
     //add persistent comments
-    const commentForm = document.querySelector('form.comment-form');
-    commentForm.addEventListener('submit', (event) => {
-        addComment(event, image)
-        });
+    // const commentForm = document.querySelector('form.comment-form');
+    // commentForm.addEventListener('submit', (event) => {
+    //     addComment(event, image)
+    //     });
 }
 
 function updateLikes(image, value)
@@ -86,32 +86,32 @@ function updateLikes(image, value)
 
 //Add a comment (no persistance needed)
 //get comment box and add event
-// const commentForm = document.querySelector('form.comment-form');
-// commentForm.addEventListener('submit', addComment);
+const commentForm = document.querySelector('form.comment-form');
+commentForm.addEventListener('submit', addComment);
 
-function addComment(event, image)
+function addComment(event)
 {
     event.preventDefault();
 
-    const newComment = {
-        content: event.target.comment.value,
-        imageId: image.id
-    }
-    //make a post request to add new comment to image in the db
-    fetch(commentsUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(newComment)
-    })
-    .then(res => res.json())
-    .then( (json) => {
-        event.target.comment.value = '';
-        console.log(json);
-    }
-    );
+    // const newComment = {
+    //     content: event.target.comment.value,
+    //     imageId: image.id
+    // }
+    // //make a post request to add new comment to image in the db
+    // fetch(commentsUrl, {
+    //     method: 'POST',
+    //     headers,
+    //     body: JSON.stringify(newComment)
+    // })
+    // .then(res => res.json())
+    // .then( (json) => {
+    //     event.target.comment.value = '';
+    //     console.log(json);
+    // }
+    // );
 
-    // commentHelper(event.target.comment.value);
-
+    commentHelper(event.target.comment.value);
+    event.target.comment.value = '';
 }
 
 function commentHelper(commentText)
