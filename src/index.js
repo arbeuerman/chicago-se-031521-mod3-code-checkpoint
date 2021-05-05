@@ -14,7 +14,7 @@ function getImages()
 {
     fetch(imageUrl)
     .then(res => res.json())
-    .then(displayImages);
+    .then(displayImages).catch(console.log);
 }
 
 function displayImages(images)
@@ -62,6 +62,12 @@ function displayImage(image)
     //get likes section to add to
     // const likesDiv = imageCard.querySelector('div.likes-section');
     // likesDiv.appendChild(downVoteButton);
+
+    //add persistent comments
+    const commentForm = document.querySelector('form.comment-form');
+    commentForm.addEventListener('submit', (event) => {
+        addComment(event, image)
+        });
 }
 
 function updateLikes(image, value)
@@ -80,14 +86,32 @@ function updateLikes(image, value)
 
 //Add a comment (no persistance needed)
 //get comment box and add event
-const commentForm = document.querySelector('form.comment-form');
-commentForm.addEventListener('submit', addComment);
+// const commentForm = document.querySelector('form.comment-form');
+// commentForm.addEventListener('submit', addComment);
 
-function addComment(event)
+function addComment(event, image)
 {
     event.preventDefault();
-    commentHelper(event.target.comment.value);
-    event.target.comment.value = '';
+
+    const newComment = {
+        content: event.target.comment.value,
+        imageId: image.id
+    }
+    //make a post request to add new comment to image in the db
+    fetch(commentsUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(newComment)
+    })
+    .then(res => res.json())
+    .then( (json) => {
+        event.target.comment.value = '';
+        console.log(json);
+    }
+    );
+
+    // commentHelper(event.target.comment.value);
+
 }
 
 function commentHelper(commentText)
