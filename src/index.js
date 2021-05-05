@@ -23,11 +23,11 @@ function displayImages(images)
     //and in the future might be more than one image
     images.forEach(image => displayImage(image)); 
 }
+
 //get the image element
 //fill out the image card with the appropriate image data
 function displayImage(image)
 {
-    //const imagesElement = document.querySelector('div.image-container');
     const imageCard = document.querySelector('div.image-card');
     imageCard.querySelector('h2').innerText = image.title;
     imageCard.querySelector('img').src = image.image;
@@ -35,7 +35,10 @@ function displayImage(image)
     
     // Click on the heart icon to increase image likes, and still see them when I reload the page
     //get like button element and add event listener
-    imageCard.querySelector('button.like-button').addEventListener('click', () => updateLikes(image));
+    imageCard.querySelector('button.like-button').addEventListener('click', () => {
+        const value = 1;
+        updateLikes(image, value);
+    });
     
     //get comments
     fetch(commentsUrl)
@@ -45,17 +48,25 @@ function displayImage(image)
         commentsList.innerHTML = '';
         //update image with comments
         imageComments.forEach(comment => {
-            const commentLi = document.createElement('li');
-            commentLi.innerText = comment.content;
-            commentsList.appendChild(commentLi);
+            commentHelper(comment.content);
         });
     });
+
+    //downvote an image
+    //create a downvote button
+    const downVoteButton = document.querySelector('button.dislike-button');
+    downVoteButton.addEventListener('click', () => {
+        const value = -1;
+        updateLikes(image, value)
+    });
+    //get likes section to add to
+    // const likesDiv = imageCard.querySelector('div.likes-section');
+    // likesDiv.appendChild(downVoteButton);
 }
 
-
-function updateLikes(image)
+function updateLikes(image, value)
 {
-    image.likes++;
+    image.likes = image.likes + value;
     const singleImageUrl = `${imageUrl}/${image.id}`;
     //make a patch request to update the image likes in the db
     fetch(singleImageUrl, {
@@ -75,11 +86,14 @@ commentForm.addEventListener('submit', addComment);
 function addComment(event)
 {
     event.preventDefault();
-    const comment = event.target.comment.value;
-    const commentLi = document.createElement('li');
-    commentLi.innerText = comment;
-    commentsList.appendChild(commentLi);
+    commentHelper(event.target.comment.value);
     event.target.comment.value = '';
 }
 
+function commentHelper(commentText)
+{
+    const commentLi = document.createElement('li');
+    commentLi.innerText = commentText;
+    commentsList.appendChild(commentLi);
+}
 
